@@ -256,6 +256,7 @@
         }
 
         function drawDebug(x, y, color) {
+            // return ;
             ctx.beginPath();
             ctx.fillStyle = color;
             ctx.arc(x, y, 1, 0, Math.PI * 2, false);
@@ -386,12 +387,12 @@
             }
         }
 
-        function isWall(x, y, cx, cy) {
+        /*function isWall(x, y, cx, cy) {
             var start, r;
             var retX = true,
                 retY = true;
 
-            x += ((5 * cx) >> 0);
+            x += ((1 * cx) >> 0);
 
             if(x > 0 && y > 0) {
                 start = y * width * 4 + x * 4;
@@ -402,8 +403,8 @@
                 }
             }
 
-            x -= (5 * cx);
-            y += (5 * cy);
+            x -= (1 * cx);
+            y += (1 * cy);
             if(y > 0 && x > 0) {
                 start = y * width * 4 + x * 4;
                 r = pixData[start];
@@ -417,7 +418,7 @@
                 x: retX,
                 y: retY
             };
-        }
+        }*/
 
         /**        获取墙面信息结束，开始绘制3D迷宫           **/
         var oC3 = document.getElementById('c3d');
@@ -678,7 +679,16 @@
         webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, new Uint16Array(index_data), webgl.STATIC_DRAW);
 
         webgl.uniformMatrix4fv(
-            uPMatrix, false, [1,0,0,0, 0,1,0,0, 0,0,-1,-1, 0,0,-2,0]
+            uPMatrix, false, (function(a, r, n, f){
+                a = 1 / Math.tan(a * Math.PI / 360);
+                
+                return [
+                    a/r, 0, 0, 0,
+                    0, a, 0, 0,
+                    0, 0, -(f+n)/(f-n), -1,
+                    0, 0, -2*f*n/(f-n), 0
+                ];
+            })(90, c2d.width/c2d.height, 0.1, 100)
         );
         
         webgl.enable(webgl.DEPTH_TEST);
@@ -771,7 +781,7 @@
             var c = Math.cos(a);
 
             webgl.uniformMatrix4fv(
-                uMVMatrix, false, [10 * c,0,-10 * s,0, 0,5,0,0, 10 * s,0,10 * c,0, 0,0,-122,1]
+                uMVMatrix, false, [10 * c,0,-10 * s,0, 0,5,0,0, 10 * s,0,10 * c,0, 0,0,-120.5,1]
             );
 
             webgl.uniformMatrix4fv(
@@ -851,8 +861,13 @@
                 cx = Math.sin(-this.rot) * e;
                 cy = Math.cos(-this.rot) * e;
 
+
                 this.x += cx;
                 this.z += cy;
+
+                /*if(this.z > 10) {
+                    this.z = Math.round(this.z);
+                }*/
 
                 ret = role.check(-this.x/120, this.z/242, -cx, cy); // 后两个参数代表方向
 
@@ -875,7 +890,8 @@
                     c = Math.cos(this.rot),
                     x = this.x,
                     z = this.z;
-                // 先平移，后旋转
+
+                // 无Y轴相关变化
                 return [
                     c, 0, -s, 0,
                     0, 1, 0, 0,
@@ -895,7 +911,6 @@
         var cheats = [65, 76, 76, 79, 89, 84, 69, 65, 77];
         var isInCheats = false;
 
-        // 在KEYS中储存按键状态
         document.onkeydown = function(e) {
             if(e.keyCode === 13) {
                 if(isInCheats) {
@@ -957,17 +972,129 @@
             this.diffTop = oC2.offsetTop;
             this.diffLeft = oC2.offsetLeft;
             this.disX = oC2.offsetHeight;
-            this.disY = oC2.offsetWidth;
+            this.disY = oC2.offsetWidth + 1;
 
             this.x = 145;
-            this.y = 0;
+            this.y = -1;
+
 
             document.body.appendChild(this.main);
         }
 
         Role.prototype.update = function(x, y) {
+            this.x0 = this.x - 1;
+            this.x2 = this.x + 1;
+
+            this.y0 = this.y - 1;
+            this.y2 = this.y + 1;
+
             this.main.style.top = this.diffTop + this.x - 4 + 'px';
             this.main.style.left = this.diffLeft + this.y - 8 + 'px';
+        };
+
+        Role.prototype.isWall = function(cx, cy) {
+            var points = [];
+            var ret;
+            var retX = true,
+                retY = true;
+            if(cx === -1) {
+                points.push({
+                    x: this.y0,
+                    y: this.x0
+                }, {
+                    x: this.y0,
+                    y: this.x2
+                });
+
+                if(cy === -1) {
+                    points.push({
+                        x: this.y2,
+                        y: this.x0
+                    });
+                } else {
+                    points.push({
+                        x: this.y2,
+                        y: this.x2
+                    });
+                }
+            } else {
+                points.push({
+                    x: this.y2,
+                    y: this.x0
+                }, {
+                    x: this.y2,
+                    y: this.x2
+                });
+
+                if(cy === -1) {
+                    points.push({
+                        x: this.y0,
+                        y: this.x0
+                    });
+                } else {
+                    points.push({
+                        x: this.y0,
+                        y: this.x2
+                    });
+                }
+            }
+
+            for(var i = 0; i < 3; i++) {
+                ret = this.pointCheck(points[i].x, points[i].y, cx, cy);
+
+                if(!ret.x) {
+                    retX = false;
+                }
+
+                if(!ret.y) {
+                    retY = false;
+                }
+
+                if(!retX && !retY) {
+                    break ;
+                }
+            }
+            
+            return {
+                x: retX,
+                y: retY
+            };
+        };
+
+        Role.prototype.pointCheck = function(x, y, cx, cy) {
+            var start, r;
+            var retX = true,
+                retY = true;
+
+            x = x >> 0;
+            y = y >> 0;
+
+            x += ((1 * cx) >> 0);
+
+            if(x > 0 && y > 0) {
+                start = y * width * 4 + x * 4;
+                r = pixData[start];
+                if(r === 0) {
+                    drawDebug(x, y, 'yellow');
+                    retX = false;
+                }
+            }
+
+            x -= (1 * cx);
+            y += (1 * cy);
+            if(y > 0 && x > 0) {
+                start = y * width * 4 + x * 4;
+                r = pixData[start];
+                if(r === 0) {
+                    drawDebug(x, y, 'yellow');
+                    retY = false;
+                }
+            }
+            
+            return {
+                x: retX,
+                y: retY
+            };
         };
 
         Role.prototype.check = function(x, y, cx, cy) {
@@ -975,12 +1102,12 @@
             x = (x/2+0.5) * this.disX;
             y = (y) * this.disY;
 
-            cx = cx / Math.abs(cx);
-            cy = cy / Math.abs(cy);
+            cx = Math.abs(cx) < 0.01 ? 0 : cx / Math.abs(cx);
+            cy = Math.abs(cy) < 0.01 ? 0 : cy / Math.abs(cy);
 
-            drawDebug((y>>0)-4, x>>0, 'green');
-
-            ret = isWall((this.y >> 0) - 4, this.x >> 0, cy, cx);
+            // drawDebug((y>>0)-4, x>>0, 'green');
+            drawDebug(this.y >> 0, this.x >> 0, 'green');
+            ret = this.isWall(cy, cx);
 
             data = {
                 x: (ret.y === true) ? x : 0,

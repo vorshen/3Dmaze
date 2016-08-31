@@ -49,7 +49,6 @@
     <style>
         html {
             cursor: none;
-            overflow: hidden;
         }
         .c2d {
             margin: 20px auto;
@@ -93,6 +92,7 @@
             border: 1px solid black;
             border-radius: 6px;
             overflow: hidden;
+            display: none;
         }
         .cheat {
             width: 100%;
@@ -343,7 +343,7 @@
                 }
             }
 
-            // console.log(rowWall);
+            console.log(rowWall.length);
         }
 
         function getColWall() {
@@ -487,30 +487,30 @@
                 k1 = (2 * i / height) - 1;
                 k2 = (2 * (i + 10) / height) - 1;
                 po_data.push.apply(po_data, [
-                    tmp.x1*12+0.01, -1.09, k1*12, // 左下
-                    tmp.x2*12+0.01, -1.09, k1*12, // 右下
-                    tmp.x2*12+0.01, 0.2, k1*12, // 右上
-                    tmp.x1*12+0.01, 0.2, k1*12, // 左上
+                    tmp.x1*120+0.01, -1.09, k1*120, // 左下
+                    tmp.x2*120+0.01, -1.09, k1*120, // 右下
+                    tmp.x2*120+0.01, 0.21, k1*120, // 右上
+                    tmp.x1*120+0.01, 0.21, k1*120, // 左上
 
-                    tmp.x2*12+0.01, -1.09, k1*12,
-                    tmp.x2*12+0.01, -1.09, k2*12,
-                    tmp.x2*12+0.01, 0.2, k2*12,
-                    tmp.x2*12+0.01, 0.2, k1*12,
+                    tmp.x2*120+0.01, -1.09, k1*120,
+                    tmp.x2*120+0.01, -1.09, k2*120,
+                    tmp.x2*120+0.01, 0.21, k2*120,
+                    tmp.x2*120+0.01, 0.21, k1*120,
 
-                    tmp.x1*12+0.01, -1.09, k2*12,
-                    tmp.x2*12+0.01, -1.09, k2*12,
-                    tmp.x2*12+0.01, 0.2, k2*12,
-                    tmp.x1*12+0.01, 0.2, k2*12,
+                    tmp.x1*120+0.01, -1.09, k2*120,
+                    tmp.x2*120+0.01, -1.09, k2*120,
+                    tmp.x2*120+0.01, 0.21, k2*120,
+                    tmp.x1*120+0.01, 0.21, k2*120,
 
-                    tmp.x1*12+0.01, -1.09, k1*12,
-                    tmp.x1*12+0.01, -1.09, k2*12,
-                    tmp.x1*12+0.01, 0.2, k2*12,
-                    tmp.x1*12+0.01, 0.2, k1*12,
+                    tmp.x1*120+0.01, -1.09, k1*120,
+                    tmp.x1*120+0.01, -1.09, k2*120,
+                    tmp.x1*120+0.01, 0.21, k2*120,
+                    tmp.x1*120+0.01, 0.21, k1*120,
 
-                    tmp.x1*12+0.01, 0.2, k1*12,
-                    tmp.x2*12+0.01, 0.2, k1*12,
-                    tmp.x2*12+0.01, 0.2, k2*12,
-                    tmp.x1*12+0.01, 0.2, k1*12
+                    tmp.x1*120+0.01, 0.21, k1*120,
+                    tmp.x2*120+0.01, 0.21, k1*120,
+                    tmp.x2*120+0.01, 0.21, k2*120,
+                    tmp.x1*120+0.01, 0.21, k2*120
                 ]);
 
                 count += (6*5);
@@ -580,30 +580,30 @@
                 k1 = 2 * (i / width) - 1;
                 k2 = 2 * ((i + 10) / width) - 1;
                 po_data.push.apply(po_data, [
-                    k1*12, -1.09, tmp.y1*12+0.01, // 前下
-                    k1*12, -1.09, tmp.y2*12+0.01, // 后下
-                    k1*12, 0.2, tmp.y2*12+0.01, // 后上
-                    k1*12, 0.2, tmp.y1*12+0.01, // 前上
+                    k1*120, -1.09, tmp.y1*120+0.01, // 前下
+                    k1*120, -1.09, tmp.y2*120+0.01, // 后下
+                    k1*120, 0.2, tmp.y2*120+0.01, // 后上
+                    k1*120, 0.2, tmp.y1*120+0.01, // 前上
 
-                    k1*12, -1.09, tmp.y1*12+0.01,
-                    k2*12, -1.09, tmp.y1*12+0.01,
-                    k2*12, 0.2, tmp.y1*12+0.01,
-                    k1*12, 0.2, tmp.y1*12+0.01,
+                    k1*120, -1.09, tmp.y1*120+0.01,
+                    k2*120, -1.09, tmp.y1*120+0.01,
+                    k2*120, 0.2, tmp.y1*120+0.01,
+                    k1*120, 0.2, tmp.y1*120+0.01,
 
-                    k2*12, -1.09, tmp.y1*12+0.01,
-                    k2*12, -1.09, tmp.y2*12+0.01,
-                    k2*12, 0.2, tmp.y2*12+0.01,
-                    k2*12, 0.2, tmp.y1*12+0.01,
+                    k2*120, -1.09, tmp.y1*120+0.01,
+                    k2*120, -1.09, tmp.y2*120+0.01,
+                    k2*120, 0.2, tmp.y2*120+0.01,
+                    k2*120, 0.2, tmp.y1*120+0.01,
 
-                    k1*12, -1.09, tmp.y2*12+0.01,
-                    k2*12, -1.09, tmp.y2*12+0.01,
-                    k2*12, 0.2, tmp.y2*12+0.01,
-                    k1*12, 0.2, tmp.y2*12+0.01,
+                    k1*120, -1.09, tmp.y2*120+0.01,
+                    k2*120, -1.09, tmp.y2*120+0.01,
+                    k2*120, 0.2, tmp.y2*120+0.01,
+                    k1*120, 0.2, tmp.y2*120+0.01,
 
-                    k1*12, 0.2, tmp.y1*12+0.01,
-                    k1*12, 0.2, tmp.y2*12+0.01,
-                    k2*12, 0.2, tmp.y2*12+0.01,
-                    k2*12, 0.2, tmp.y1*12+0.01
+                    k1*120, 0.2, tmp.y1*120+0.01,
+                    k1*120, 0.2, tmp.y2*120+0.01,
+                    k2*120, 0.2, tmp.y2*120+0.01,
+                    k2*120, 0.2, tmp.y1*120+0.01
                 ]);
 
                 count += (6*5);
@@ -764,7 +764,7 @@
             var c = Math.cos(a);
 
             webgl.uniformMatrix4fv(
-                uMVMatrix, false, [10 * c,0,-10 * s,0, 0,5,0,0, 10 * s,0,10 * c,0, 0,0,-120.5,1]
+                uMVMatrix, false, [1 * c,0,-1 * s,0, 0,5,0,0, 1 * s,0,1 * c,0, 0,0,-120.5,1]
             );
 
             webgl.uniformMatrix4fv(
@@ -840,17 +840,13 @@
             y: 0,
             z: 0,
             move: function(e){
-                // 移动时需要做朝向计算
+                // 只考虑x和z轴移动，cx，cy是转换为2D的方向
                 cx = Math.sin(-this.rot) * e;
                 cy = Math.cos(-this.rot) * e;
 
 
                 this.x += cx;
                 this.z += cy;
-
-                /*if(this.z > 10) {
-                    this.z = Math.round(this.z);
-                }*/
 
                 ret = role.check(-this.x/120, this.z/242, -cx, cy); // 后两个参数代表方向
 
@@ -895,7 +891,7 @@
         var isInCheats = false;
 
         document.onkeydown = function(e) {
-            if(e.keyCode === 13) {
+            /*if(e.keyCode === 13) {
                 if(isInCheats) {
                     closeCheats();
                 } else {
@@ -904,7 +900,7 @@
                 }
 
                 return ;
-            }
+            }*/
             KEYS[e.keyCode] = true;
         };
         document.onkeyup = function(e) {
@@ -914,7 +910,15 @@
         document.onmousemove = function(e) {
             var x = e.clientX;
 
-            camera.rot += ((x - globalRot) / 100);
+            if(e.clientX <= 2) {
+                camera.rot += -0.05;
+            } else if(e.clientX >= window.innerWidth - 2) {
+                camera.rot += 0.05;
+            } else {
+                camera.rot += ((x - globalRot) / 100);
+            }
+
+            
             globalRot = x;
         };
 
@@ -1088,7 +1092,6 @@
             cx = Math.abs(cx) < 0.01 ? 0 : cx / Math.abs(cx);
             cy = Math.abs(cy) < 0.01 ? 0 : cy / Math.abs(cy);
 
-            // drawDebug((y>>0)-4, x>>0, 'green');
             drawDebug(this.y >> 0, this.x >> 0, 'green');
             ret = this.isWall(cy, cx);
 

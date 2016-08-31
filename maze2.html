@@ -151,6 +151,11 @@
         Maze.prototype.drawPath = function() {
             var i;
 
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, oC2.width, oC2.height);
+
+            ctx.fillStyle = 'black';
+
             for(i = 0; i <= 290; i+=20) {
                 ctx.fillRect(0, i, 390, 10);
             }

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webgl画矩形</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        canvas {
+            border: 2px solid #dfdfdf;
+            margin: 20px 0 0 20px;
+        }
+    </style>
+    <script id="shader-vs" type="x-shader/vertex-shader">
+        attribute vec3 aPosition;
+
+        void main() {
+            gl_Position = vec4(aPosition, 1.0);
+        }
+    </script>
+    <script id="shader-fs" type="x-shader/fragment-shader">
+        precision highp float;
+
+        void main() {
+            gl_FragColor = vec4(0, 0, 0, 1.0);
+        }
+    </script>
+</head>
+<body>
+    <canvas id="c" width="200" height="200"></canvas>
+    <input type="button" value="左移" id="btn" />
+
+    <script>
+        var oC = document.getElementById('c');
+        var webgl = oC.getContext('webgl');
+
+        var vsScript = document.getElementById('shader-vs').innerText;
+        var fsScript = document.getElementById('shader-fs').innerText;
+
+        var vs = webgl.createShader(webgl.VERTEX_SHADER);
+        var fs = webgl.createShader(webgl.FRAGMENT_SHADER);
+
+        webgl.shaderSource(vs, vsScript);
+        webgl.shaderSource(fs, fsScript);
+
+        webgl.compileShader(vs);
+        webgl.compileShader(fs);
+
+        if(!webgl.getShaderParameter(vs, webgl.COMPILE_STATUS)) {
+            alert('error');
+        }
+
+        if(!webgl.getShaderParameter(fs, webgl.COMPILE_STATUS)) {
+            alert('error');
+        }
+
+        var program = webgl.createProgram();
+
+        webgl.attachShader(program, vs);
+        webgl.attachShader(program, fs);
+
+        webgl.linkProgram(program);
+        webgl.useProgram(program);
+
+        var aPosition = webgl.getAttribLocation(program, 'aPosition');
+
+        webgl.enableVertexAttribArray(aPosition);
+
+        var aPo = [
+            -0.2, -0.2, 0,
+            0.2, -0.2, 0,
+            0.2, 0.2, 0,
+            -0.2, 0.2, 0
+        ];
+
+        var aIndex = [0, 1, 2, 0, 2, 3];
+
+        webgl.bindBuffer(webgl.ARRAY_BUFFER, webgl.createBuffer());
+        webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(aPo), webgl.STATIC_DRAW);
+        webgl.vertexAttribPointer(aPosition, 3, webgl.FLOAT, false, 0, 0);
+
+        webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER, webgl.createBuffer());
+        webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, new Uint16Array(aIndex), webgl.STATIC_DRAW);
+
+
+        webgl.drawElements(webgl.TRIANGLES, 6, webgl.UNSIGNED_SHORT, 0);
+        
+
+        btn.onclick = function() {
+            var aPo = [
+                -0.3, -0.2, 0,
+                0.1, -0.2, 0,
+                0.1, 0.2, 0,
+                -0.3, 0.2, 0
+            ];
+
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, webgl.createBuffer());
+            webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(aPo), webgl.STATIC_DRAW);
+            webgl.vertexAttribPointer(aPosition, 3, webgl.FLOAT, false, 0, 0);
+
+            webgl.drawElements(webgl.TRIANGLES, 6, webgl.UNSIGNED_SHORT, 0);
+
+            btn.onclick = function() {};
+        };
+    </script>
+</body>
+</html>

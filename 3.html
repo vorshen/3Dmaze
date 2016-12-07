@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>z轴对比1</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        canvas {
+            border: 2px solid #dfdfdf;
+            margin: 20px 0 0 20px;
+        }
+    </style>
+    <script id="shader-vs" type="x-shader/vertex-shader">
+        attribute vec3 aPosition;
+        attribute vec3 aColor;
+
+        varying vec3 vColor;
+
+        void main() {
+            gl_Position = vec4(aPosition, 1.0);
+
+            vColor = aColor;
+        }
+    </script>
+    <script id="shader-fs" type="x-shader/fragment-shader">
+        precision highp float;
+
+        varying vec3 vColor;
+
+        void main() {
+            gl_FragColor = vec4(vColor, 1.0);
+        }
+    </script>
+</head>
+<body>
+    <canvas id="c" width="400" height="400"></canvas>
+
+    <script>
+        var oC = document.getElementById('c');
+        var webgl = oC.getContext('webgl');
+
+        var vsScript = document.getElementById('shader-vs').innerText;
+        var fsScript = document.getElementById('shader-fs').innerText;
+
+        var vs = webgl.createShader(webgl.VERTEX_SHADER);
+        var fs = webgl.createShader(webgl.FRAGMENT_SHADER);
+
+        webgl.shaderSource(vs, vsScript);
+        webgl.shaderSource(fs, fsScript);
+
+        webgl.compileShader(vs);
+        webgl.compileShader(fs);
+
+        if(!webgl.getShaderParameter(vs, webgl.COMPILE_STATUS)) {
+            alert('error');
+        }
+
+        if(!webgl.getShaderParameter(fs, webgl.COMPILE_STATUS)) {
+            alert('error');
+        }
+
+        var program = webgl.createProgram();
+
+        webgl.attachShader(program, vs);
+        webgl.attachShader(program, fs);
+
+        webgl.linkProgram(program);
+        webgl.useProgram(program);
+
+        var aPosition = webgl.getAttribLocation(program, 'aPosition');
+        var aColor = webgl.getAttribLocation(program, 'aColor');
+
+        webgl.enableVertexAttribArray(aPosition);
+
+        webgl.enable(webgl.DEPTH_TEST);
+
+        var aPo = [
+            -0.2, -0.2, -0.5,
+            0.2, -0.2, -0.5,
+            0.2, 0.2, -0.5,
+            -0.2, 0.2, -0.5
+        ];
+
+        var aIndex = [0, 1, 2, 0, 2, 3];
+
+        webgl.bindBuffer(webgl.ARRAY_BUFFER, webgl.createBuffer());
+        webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(aPo), webgl.STATIC_DRAW);
+        webgl.vertexAttribPointer(aPosition, 3, webgl.FLOAT, false, 0, 0);
+
+        webgl.vertexAttrib3f(aColor, 1, 0, 0);
+
+        webgl.bindBuffer(webgl.ELEMENT_ARRAY_BUFFER, webgl.createBuffer());
+        webgl.bufferData(webgl.ELEMENT_ARRAY_BUFFER, new Uint16Array(aIndex), webgl.STATIC_DRAW);
+
+        // 先画一个z轴是-0.1的矩形，颜色是红色
+        webgl.drawElements(webgl.TRIANGLES, 6, webgl.UNSIGNED_SHORT, 0);
+
+        aPo = [
+            0, -0.4, -0.8,
+            0.4, -0.4, -0.8,
+            0.4, 0, -0.8,
+            0, 0, -0.8
+        ];
+
+        webgl.bindBuffer(webgl.ARRAY_BUFFER, webgl.createBuffer());
+        webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(aPo), webgl.STATIC_DRAW);
+        webgl.vertexAttribPointer(aPosition, 3, webgl.FLOAT, false, 0, 0);
+
+        webgl.vertexAttrib3f(aColor, 0, 1, 0);
+
+        // 再画一个z轴是-0.2的矩形，颜色是绿色
+        webgl.drawElements(webgl.TRIANGLES, 6, webgl.UNSIGNED_SHORT, 0);
+    </script>
+</body>
+</html>
